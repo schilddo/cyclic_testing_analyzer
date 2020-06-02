@@ -1,0 +1,139 @@
+[
+  {
+    "type": "title",
+    "title": "Experiment Type"
+  },
+  {
+    "type": "bool",
+    "title": "Pre-Loading",
+    "desc": "Enable if the experiment included pre-loading cycles",
+    "section": "Analysis Settings",
+    "key": "split_peaks"
+  },
+  {
+    "type": "numeric",
+    "title": "Filter Value",
+    "desc": "The strain value used to distinguish between pre-loading and normal experiment cycles",
+    "section": "Analysis Settings",
+    "key": "filter_value"
+  },
+  {
+    "type": "title",
+    "title": "Files and Folders"
+  },
+  {
+    "type": "bool",
+    "title": "Strain unit",
+    "desc": "Enable if the strain in the input file is given in [%]",
+    "section": "Analysis Settings",
+    "key": "is_percent"
+  },
+  {
+    "type": "path",
+    "title": "Output path",
+    "desc": "Figures and calculation results are stored here upon saving",
+    "section": "Analysis Settings",
+    "key": "output_path"
+  },
+  {
+    "type": "title",
+    "title": "Geometry"
+  },
+  {
+    "type": "numeric",
+    "title": "Width",
+    "desc": "Specimen width in [mm] to be used in stress calculation",
+    "section": "Analysis Settings",
+    "key": "x_dimensions"
+  },
+  {
+    "type": "numeric",
+    "title": "Length",
+    "desc": "Specimen lenght in [mm] to be used in stress calculation",
+    "section": "Analysis Settings",
+    "key": "y_dimensions"
+  },
+  {
+    "type": "title",
+    "title": "Preprocessing Parameters"
+  },
+  {
+    "type": "numeric",
+    "title": "Cutoff factor",
+    "desc": "Determines experiment end by checking for a slope bigger than the factor times the average slope",
+    "section": "Analysis Settings",
+    "key": "factor"
+  },
+  {
+    "type": "numeric",
+    "title": "Smoothing for preprocessing",
+    "desc": "Rolling centered mean applied to the strain-time curve for consistent cycle detection",
+    "section": "Analysis Settings",
+    "key": "smoothing_pre"
+  },
+  {
+    "type": "numeric",
+    "title": "Peak distance",
+    "desc": "Peak distance parameter for the peak detection algorithm",
+    "section": "Analysis Settings",
+    "key": "peak_distance"
+  },
+  {
+    "type": "numeric",
+    "title": "Peak width",
+    "desc": "Peak width parameter for the peak detection algorithm",
+    "section": "Analysis Settings",
+    "key": "peak_width"
+  },
+  {
+    "type": "title",
+    "title": "Fitting Parameters"
+  },
+  {
+    "type": "options",
+    "title": "Fit border limits",
+    "desc": "Choose how the fit borders are determined",
+    "section": "Analysis Settings",
+    "key": "range_filter",
+    "options": ["Static strain", "Full range", "Top bottom", "Sectioned best", "Dynamic"]
+  },
+  {
+    "type": "numeric",
+    "title": "Upper strain",
+    "desc": "Upper relative strain cutoff. Only applies if 'Static strain' option is selected",
+    "section": "Analysis Settings",
+    "key": "upper_strain"
+  },
+  {
+    "type": "numeric",
+    "title": "Lower strain",
+    "desc": "Lower relative strain cutoff. Only applies if 'Static strain' option is selected",
+    "section": "Analysis Settings",
+    "key": "lower_strain"
+  },
+    {
+    "type": "numeric",
+    "title": "Relative stress cutoff",
+    "desc": "Filter relative stress values (y axis) in percent. Only applies if 'Top bottom' option is selected",
+    "section": "Analysis Settings",
+    "key": "rel_cutoff_pct"
+  },
+  {
+    "type": "numeric",
+    "title": "Number of sections",
+    "desc": "Determines the amount of sections into which each slope is divided. Only applies if 'Sectioned best' option is selected",
+    "section": "Analysis Settings",
+    "key": "no_sections"
+  },
+  {
+    "type": "title",
+    "title": "Hysteresis parameters"
+  },
+  {
+    "type": "numeric",
+    "title": "Smoothing for hysteresis",
+    "desc": "Rolling centered mean applied to the stress-strain curve before the calculation of the hysteresis area",
+    "section": "Analysis Settings",
+    "key": "smoothing_hyst"
+  }
+]

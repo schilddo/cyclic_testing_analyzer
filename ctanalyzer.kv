@@ -1,0 +1,53 @@
+<MainPage>
+    specimen_designation: designation_specimen
+    figure: gurefi
+    console: solecon
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            size_hint_y: .05
+            id: designation_specimen
+            text: "Specimen designation"
+
+        BoxLayout:
+            size_hint_y: .05
+            Button:
+                text: "Load file"
+                on_press: app.open_for_load()
+            Button:
+                text: "Preprocess"
+                on_press: app.call_prepare()
+            Button:
+                text: "Show master curves"
+                on_press: app.call_master()
+            Button:
+                text: "Fit slopes"
+                on_press: app.call_fit()
+            Button:
+                text: "Calculate hysteresis"
+                on_press: app.call_hyst()
+            Button:
+                text: "Save results"
+                on_press: app.call_save()
+
+        BoxLayout:
+            size_hint_y: .85
+            MPLWrapper:
+                id: gurefi
+
+        BoxLayout:
+            size_hint_y: .05
+            Button:
+                text: "Quick evaluation"
+                size_hint_x: .2
+                on_press: app.call_all_in_one()
+            Button:
+                text: "Settings"
+                size_hint_x: .2
+                on_press: app.open_settings()
+            Label:
+                id: solecon
+                text: "Perform an action to update the log"
