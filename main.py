@@ -30,13 +30,9 @@ class CTAnalyzer(App):
 
         # value storage
         self.df = pd.DataFrame()
-        self.meta_data = {}
         self.df_prepro = pd.DataFrame()
-        self.dict_prepro = {}
-        self.master_results = {}
-        self.fit_results = {}
+        self.meta_data, self.dict_prepro, self.master_results, self.fit_results, self.parameters = {}, {}, {}, {}, {}
         self.hyst_results = []
-        self.parameters = {}
 
         # figure storage
         self.figures = {}
@@ -52,13 +48,14 @@ class CTAnalyzer(App):
         return self.screen_manager
 
     def build_config(self, config):
+        # settings at first startup, overridden by ctanalyzer.ini if existing
         self.config.setdefaults('Analysis Settings',
                                 {'split_peaks': 0,
                                  'filter_value': 0.005,
                                  'is_percent': 1,
                                  'output_path': os.path.join(os.getcwd(), 'results'),
                                  'x_dimensions': 1.3,
-                                 'y_dimensions': 10.1,
+                                 'y_dimensions': 10.0,
                                  'factor': 25,
                                  'smoothing_pre': 15,
                                  'peak_distance': 5,
@@ -68,6 +65,8 @@ class CTAnalyzer(App):
                                  'lower_strain': 0.05,
                                  'rel_cutoff_pct': 25,
                                  'no_sections': 5,
+                                 'smoothing_dynamic': 35,
+                                 'dynamic_line_divisor': 5,
                                  'smoothing_hyst': 16})
 
     def build_settings(self, settings):
@@ -83,10 +82,8 @@ class CTAnalyzer(App):
     def call_load(self, caller, filepath, event):
         self.page_load_browser.dismiss()
 
-        # flush all, prevent memory leak
-        plt.close("all")
-
-        # catch and convert from settings
+        # flush all plots (avoid memory issues); catch and convert from settings
+        plt.close('all')
         is_percent = True if ctanalyzer.get_running_app().config.get('Analysis Settings', 'is_percent') == '1' \
             else False
 
@@ -96,7 +93,7 @@ class CTAnalyzer(App):
 
         self.page_main.specimen_designation.text = self.meta_data['Specimen designation']
 
-        # plotting section
+        # plotting
         figsize = (self.page_main.figure.width / 100, self.page_main.figure.height / 100)
 
         fig = plt.figure(figsize=figsize)
@@ -119,6 +116,7 @@ class CTAnalyzer(App):
         axs[1, 1].set_xlabel('Time [s]')
         axs[1, 1].set_ylabel('Strain [mm]')
 
+        # save parameter and update UI
         self.parameters['is_percent'] = is_percent
         ctanalyzer.page_main.update_console(f'Read in file: {filepath[0]}')
         ctanalyzer.page_main.update_graphx(fig)
@@ -128,7 +126,7 @@ class CTAnalyzer(App):
         if 'prepare' in self.figures:
             plt.close(self.figures['prepare'])
 
-        # catch string properties from settings
+        # catch and convert from settings
         split_peaks = True if ctanalyzer.get_running_app().config.get('Analysis Settings', 'split_peaks') == '1' \
             else False
         filter_value = ctanalyzer.get_running_app().config.get('Analysis Settings', 'filter_value')
@@ -139,7 +137,7 @@ class CTAnalyzer(App):
         distance = ctanalyzer.get_running_app().config.get('Analysis Settings', 'peak_distance')
         width = ctanalyzer.get_running_app().config.get('Analysis Settings', 'peak_width')
 
-        figsize = (self.page_main.figure.width / 100, self.page_main.figure.height / 100)
+        figsize = (self.page_main.figure.width/100, self.page_main.figure.height/100)
         self.df_prepro, self.dict_prepro, self.figures['prepare'] = \
             preprocessing.prepare(self.df, figsize=figsize,
                                   split_peaks=split_peaks,
@@ -151,6 +149,7 @@ class CTAnalyzer(App):
                                   distance=int(distance),
                                   width=int(width))
 
+        # save parameter and update UI
         self.parameters['split_peaks'] = split_peaks
         self.parameters['filter_value'] = filter_value
         self.parameters['x_dimensions'] = x_dimensions
@@ -190,7 +189,11 @@ class CTAnalyzer(App):
                         'rel_cutoff_pct': int(ctanalyzer.get_running_app().config.get('Analysis Settings',
                                                                                       'rel_cutoff_pct')),
                         'no_sections': int(ctanalyzer.get_running_app().config.get('Analysis Settings',
-                                                                                   'no_sections'))}
+                                                                                   'no_sections')),
+                        'smoothing_dynamic': int(ctanalyzer.get_running_app().config.get('Analysis Settings',
+                                                                                         'smoothing_dynamic')),
+                        'dynamic_line_divisor': int(ctanalyzer.get_running_app().config.get('Analysis Settings',
+                                                                                            'dynamic_line_divisor'))}
 
         figsize = (self.page_main.figure.width / 100, self.page_main.figure.height / 100)
 
@@ -221,14 +224,15 @@ class CTAnalyzer(App):
                                                                   smoothing=int(smoothing_hyst),
                                                                   figsize=figsize)
 
+        # save parameter and update UI
         self.parameters['smoothing_hyst'] = smoothing_hyst
         ctanalyzer.page_main.update_console(f'Successfully calculated hysteresis: {len(self.hyst_results)} areas')
         ctanalyzer.page_main.update_graphx(self.figures['calc'])
 
     def call_save(self):
-        content = {"meta_data": self.meta_data, "master_results": self.master_results,
-                   "hyst_results": self.hyst_results, "fit_results": self.fit_results,
-                   "dict_prepro": self.dict_prepro, "parameters": self.parameters}
+        content = {'meta_data': self.meta_data, 'master_results': self.master_results,
+                   'hyst_results': self.hyst_results, 'fit_results': self.fit_results,
+                   'dict_prepro': self.dict_prepro, 'parameters': self.parameters}
 
         io_data.save_data(ctanalyzer.get_running_app().config.get('Analysis Settings', 'output_path'),
                           content, self.figures, sample_name=self.meta_data['Specimen designation'])

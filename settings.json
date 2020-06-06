@@ -126,6 +126,20 @@
     "key": "no_sections"
   },
   {
+    "type": "numeric",
+    "title": "Smoothing for fitting",
+    "desc": "Rolling centered mean applied twice during the fit border detection sub-step. Only applies to some fits if 'Dynamic' option is selected",
+    "section": "Analysis Settings",
+    "key": "smoothing_dynamic"
+  },
+  {
+    "type": "numeric",
+    "title": "Line length divider",
+    "desc": "Division factor applied to the total section length to obtain the point connector length. Only applies to some fits if 'Dynamic' option is selected",
+    "section": "Analysis Settings",
+    "key": "dynamic_line_divisor"
+  },
+  {
     "type": "title",
     "title": "Hysteresis parameters"
   },

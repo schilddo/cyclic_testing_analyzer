@@ -44,7 +44,7 @@ def linear(df_in, dfs_grouped, range_filter, figsize=(20, 10), log=False):
                     range_filter['type'] = 'Full range'
                     df_start_end = calc_borders(range_filter, down, chunk)
                 elif not (group_id < len(dfs_grouped) // 3) and down == 0:
-                    range_filter['type'] = 'Dynamic'
+                    range_filter['type'] = 'Point Connect Distance'
                     df_start_end = calc_borders(range_filter, down, chunk)
                 elif not (group_id < len(dfs_grouped) // 3) and down == 1:
                     range_filter['type'] = 'Top bottom'
@@ -134,7 +134,7 @@ def calc_borders(range_filter, down, chunk):
     elif range_type == 'Top bottom':
         top = df_range['Standard stress'].max()
         bottom = df_range['Standard stress'].min()
-        cutoff = (top - bottom)*(range_filter['rel_cutoff_pct']/100)
+        cutoff = (top-bottom)*(range_filter['rel_cutoff_pct']/100)
         cut_top = top - cutoff
         cut_bottom = bottom + cutoff
         df_start_end = df_range[(df_range['Standard stress'] > cut_bottom) & (df_range['Standard stress'] < cut_top)]
@@ -151,9 +151,9 @@ def calc_borders(range_filter, down, chunk):
 
         # linear fit each section of the first 50 percent and determine best r2 score
         if down == 0:
-            sections_filtered = sections[:-(len(sections) // 2)]
+            sections_filtered = sections[:-(len(sections)//2)]
         else:
-            sections_filtered = sections[(len(sections) // 2):]
+            sections_filtered = sections[(len(sections)//2):]
 
         r2_best, best_section = (0, 0)
         for section in sections_filtered:
@@ -173,28 +173,28 @@ def calc_borders(range_filter, down, chunk):
         df_start_end = best_section
 
     # FILTER: dynamic determination
-    elif range_type == 'Dynamic':
-        # smooth and get line width from total lenght
+    elif range_type == 'Point Connect Distance':
+        # smooth and get line width from total length
         df_r = df_range.rolling(window=range_filter['dynamic_smoothing']).mean()
         line_width = len(df_r) // range_filter['dynamic_line_divisor']
 
         # start/end points of line, generate the middle of line points
-        start_points = df_r.shift(line_width // 2)
-        end_points = df_r.shift(-line_width // 2)
+        start_points = df_r.shift(line_width//2)
+        end_points = df_r.shift(-line_width//2)
         generated_points = pd.DataFrame(
-            {'Standard stress': (end_points['Standard stress'] + start_points['Standard stress']) / 2,
-             'Standard travel': (end_points['Standard travel'] + start_points['Standard travel']) / 2})
+            {'Standard stress': (end_points['Standard stress'] + start_points['Standard stress'])/2,
+             'Standard travel': (end_points['Standard travel'] + start_points['Standard travel'])/2})
 
         # calculate delta x, delta y, distance and distance square root according to pythagoras theorem
-        df_r['delta_x'] = abs(generated_points['Standard travel'] - df_r['Standard travel'])
-        df_r['delta_y'] = abs(generated_points['Standard stress'] - df_r['Standard stress'])
-        df_r['distance'] = df_r['delta_x'] ** 2 + df_r['delta_y'] ** 2
+        df_r['delta_x'] = abs(generated_points['Standard travel']-df_r['Standard travel'])
+        df_r['delta_y'] = abs(generated_points['Standard stress']-df_r['Standard stress'])
+        df_r['distance'] = df_r['delta_x']**2 + df_r['delta_y']**2
         df_r['distancesqrt'] = df_r['distance'].map(math.sqrt).rolling(window=range_filter['dynamic_smoothing'],
                                                                        center=True).mean()
 
         # apply a half of the maximum/minimum diff cutoff to the distance square root, choose first complacent section
-        max_min_diff = df_r['distancesqrt'].max() - df_r['distancesqrt'].min()
-        df_r_filter = df_r[df_r['distancesqrt'] < max_min_diff / 2]
+        max_min_diff = df_r['distancesqrt'].max()-df_r['distancesqrt'].min()
+        df_r_filter = df_r[df_r['distancesqrt'] < max_min_diff/2]
         df_jumps = df_r_filter[df_r_filter.index.to_series().diff() > 1]
 
         if len(df_jumps) > 0:
