@@ -82,19 +82,28 @@ class CTAnalyzer(App):
     def call_load(self, caller, filepath, event):
         self.page_load_browser.dismiss()
 
+        # check if input is TXT or csv
+        if not filepath[0].lower().endswith('.txt') and not filepath[0].lower().endswith('.csv'):
+            ctanalyzer.page_main.update_console('ERROR: Please provide a .csv or .txt file')
+            return
+
         # flush all plots (avoid memory issues); catch and convert from settings
         plt.close('all')
         is_percent = True if ctanalyzer.get_running_app().config.get('Analysis Settings', 'is_percent') == '1' \
             else False
 
         self.df, self.meta_data = io_data.load_data(filepath[0],
-                                                    is_percent=is_percent,
-                                                    log=False)
+                                                    is_percent=is_percent)
+
+        # check for required fields
+        if 'Specimen designation' not in self.meta_data or self.df.empty:
+            ctanalyzer.page_main.update_console('ERROR: Please check input file formatting')
+            return
 
         self.page_main.specimen_designation.text = self.meta_data['Specimen designation']
 
         # plotting
-        figsize = (self.page_main.figure.width / 100, self.page_main.figure.height / 100)
+        figsize = (self.page_main.figure.width/100, self.page_main.figure.height/100)
 
         fig = plt.figure(figsize=figsize)
         axs = fig.subplots(2, 2)
@@ -166,7 +175,7 @@ class CTAnalyzer(App):
         if 'master_curves' in self.figures:
             plt.close(self.figures['master_curves'])
 
-        figsize = (self.page_main.figure.width / 100, self.page_main.figure.height / 100)
+        figsize = (self.page_main.figure.width/100, self.page_main.figure.height/100)
         self.master_results, self.figures['master_curves'] = preprocessing.get_master_curves(
             self.df_prepro, self.dict_prepro['hills'],
             self.dict_prepro['valleys'], figsize=figsize)
@@ -195,10 +204,10 @@ class CTAnalyzer(App):
                         'dynamic_line_divisor': int(ctanalyzer.get_running_app().config.get('Analysis Settings',
                                                                                             'dynamic_line_divisor'))}
 
-        figsize = (self.page_main.figure.width / 100, self.page_main.figure.height / 100)
+        figsize = (self.page_main.figure.width/100, self.page_main.figure.height/100)
 
         self.fit_results, self.figures['linear'] = fit.linear(self.df_prepro, self.dict_prepro['dfs_grouped'],
-                                                              range_filter, figsize=figsize, log=False)
+                                                              range_filter, figsize=figsize)
 
         self.parameters['range_filter'] = range_filter
 
@@ -208,7 +217,7 @@ class CTAnalyzer(App):
             mean = statistics.mean(np.concatenate([r2_load, r2_unload]))
             ctanalyzer.page_main.update_console(f'Successfully evaluated linear fit. Mean r²: {mean}')
         except statistics.StatisticsError:
-            ctanalyzer.page_main.update_console('Evaluation unsuccessful! Not even one single fit possible')
+            ctanalyzer.page_main.update_console('ERROR: Evaluation unsuccessful! Not even one single fit possible')
         ctanalyzer.page_main.update_graphx(self.figures['linear'])
 
     def call_hyst(self):
@@ -219,7 +228,7 @@ class CTAnalyzer(App):
         # catch string properties from settings
         smoothing_hyst = ctanalyzer.get_running_app().config.get('Analysis Settings', 'smoothing_hyst')
 
-        figsize = (self.page_main.figure.width / 100, self.page_main.figure.height / 100)
+        figsize = (self.page_main.figure.width/100, self.page_main.figure.height/100)
         self.hyst_results, self.figures['calc'] = hysteresis.calc(self.dict_prepro['dfs_grouped'],
                                                                   smoothing=int(smoothing_hyst),
                                                                   figsize=figsize)

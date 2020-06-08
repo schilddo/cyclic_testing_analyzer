@@ -11,12 +11,19 @@ logger = logging.getLogger(__name__)
 def load_data(path_to_file, is_percent=True, log=False):
     logger.info('Called load_data')
 
-    # get the metadata from TXT
+    # return empty if empty
+    if os.stat(path_to_file).st_size == 0:
+        return pd.DataFrame(), {}
+
+    # get metadata from file
     with open(path_to_file, 'r') as input_file:
         content = input_file.readlines()
+
+        # lines [0-2] = metadata, [3-4] = units
         metadata = ''.join(content[:3]).replace('\"', '')
         units = ''.join(content[3:5]).replace('\"', '')
 
+    # split at tabs and newlines
     metadata = re.split('[\t\n]', metadata)
     units = re.split('[\t\n]', units)
 
@@ -28,7 +35,7 @@ def load_data(path_to_file, is_percent=True, log=False):
     variables.append('Standard stress [MPa]')
     meta['columns'] = variables
 
-    # get the actual data from TXT
+    # get the actual data from file
     df = pd.read_csv(path_to_file, sep='\t',
                      header=0, names=[units[i] for i in range(0, 4)],
                      skiprows=4, index_col=False,

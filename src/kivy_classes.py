@@ -10,9 +10,6 @@ class MainPage(Widget):
     figure = ObjectProperty(None)
     console = ObjectProperty(None)
 
-    def update_progress(self, val):
-        self.progress.value = val
-
     def update_graphx(self, fig):
         self.figure.figure = fig
         self.figure.draw()
