@@ -98,6 +98,7 @@ class CTAnalyzer(App):
         # check for required fields
         if 'Specimen designation' not in self.meta_data or self.df.empty:
             ctanalyzer.page_main.update_console('ERROR: Please check input file formatting')
+            self.df, self.meta_data = pd.DataFrame(), pd.DataFrame()
             return
 
         self.page_main.specimen_designation.text = self.meta_data['Specimen designation']
@@ -131,9 +132,12 @@ class CTAnalyzer(App):
         ctanalyzer.page_main.update_graphx(fig)
 
     def call_prepare(self):
-        # flush previous
+        # flush previous, check if data was preprocessed
         if 'prepare' in self.figures:
             plt.close(self.figures['prepare'])
+        if self.df.empty:
+            ctanalyzer.page_main.update_console('ERROR: Please load in a file first')
+            return
 
         # catch and convert from settings
         split_peaks = True if ctanalyzer.get_running_app().config.get('Analysis Settings', 'split_peaks') == '1' \
@@ -171,9 +175,12 @@ class CTAnalyzer(App):
         ctanalyzer.page_main.update_graphx(self.figures['prepare'])
 
     def call_master(self):
-        # flush previous
+        # flush previous, check if data was preprocessed
         if 'master_curves' in self.figures:
             plt.close(self.figures['master_curves'])
+        if self.df_prepro.empty:
+            ctanalyzer.page_main.update_console('ERROR: Please preprocess data first')
+            return
 
         figsize = (self.page_main.figure.width/100, self.page_main.figure.height/100)
         self.master_results, self.figures['master_curves'] = preprocessing.get_master_curves(
@@ -184,9 +191,12 @@ class CTAnalyzer(App):
         ctanalyzer.page_main.update_graphx(self.figures['master_curves'])
 
     def call_fit(self):
-        # flush previous
+        # flush previous, check if data was preprocessed
         if 'linear' in self.figures:
             plt.close(self.figures['linear'])
+        if self.df_prepro.empty:
+            ctanalyzer.page_main.update_console('ERROR: Please preprocess data first')
+            return
 
         # catch string properties from settings
         range_filter = {'type': ctanalyzer.get_running_app().config.get('Analysis Settings',
@@ -221,9 +231,12 @@ class CTAnalyzer(App):
         ctanalyzer.page_main.update_graphx(self.figures['linear'])
 
     def call_hyst(self):
-        # flush previous
+        # flush previous, check if data was loaded
         if 'calc' in self.figures:
             plt.close(self.figures['calc'])
+        if self.df_prepro.empty:
+            ctanalyzer.page_main.update_console('ERROR: Please preprocess data first')
+            return
 
         # catch string properties from settings
         smoothing_hyst = ctanalyzer.get_running_app().config.get('Analysis Settings', 'smoothing_hyst')
@@ -239,6 +252,11 @@ class CTAnalyzer(App):
         ctanalyzer.page_main.update_graphx(self.figures['calc'])
 
     def call_save(self):
+        # check if data was loaded
+        if self.df.empty:
+            ctanalyzer.page_main.update_console('ERROR: Please load in a file first')
+            return
+
         content = {'meta_data': self.meta_data, 'master_results': self.master_results,
                    'hyst_results': self.hyst_results, 'fit_results': self.fit_results,
                    'dict_prepro': self.dict_prepro, 'parameters': self.parameters}
