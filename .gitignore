@@ -1,5 +1,15 @@
+# stores local setting changes, created on first execution, overrides parameters from the code
+ctanalyzer.ini
+
+# input/output
 input
 results
+
+# debugging
 scripts
+
+# PyCharm project
 .idea
+
+# cache
 **/__pycache__/

@@ -73,9 +73,13 @@ class CTAnalyzer(App):
         settings.add_json_panel('Analysis Settings', self.config, 'settings.json')
 
     def open_for_load(self):
+        # create input folder if not existing
+        input_path = os.path.join(self.cwd, 'input')
+        if not os.path.isdir(input_path):
+            os.mkdir(input_path)
+
         self.page_load_browser = Popup(title='Select file',
-                                       content=FileChooserListView(on_submit=self.call_load,
-                                                                   path=os.path.join(self.cwd, 'input')),
+                                       content=FileChooserListView(on_submit=self.call_load, path=input_path),
                                        size_hint=(.5, .5))
         self.page_load_browser.open()
 

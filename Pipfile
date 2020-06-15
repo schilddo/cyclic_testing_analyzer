@@ -14,6 +14,11 @@ sklearn = "*"
 pyqt5 = "*"
 kivy = "*"
 kivy-garden = "*"
+docutils = "*"
+pygments = "*"
+pypiwin32 = "*"
+"kivy-deps.sdl2" = "*"
+"kivy-deps.glew" = "*"
 
 [requires]
 python_version = "3.7"

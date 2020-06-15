@@ -98,7 +98,7 @@ def save_data(folder_out, content, figures, sample_name=None, log=False):
         elif key is 'dict_prepro':
             for name, data in subcontent.items():
                 if isinstance(data, pd.DataFrame) or isinstance(data, pd.Series):
-                    data.to_csv(os.path.join(df_dir, f'{name}'), sep='\t')
+                    data.to_csv(os.path.join(df_dir, f'{name}.TXT'), sep='\t')
                 if name is 'dfs_chunks':
                     for n, i in enumerate(data):
                         i.to_csv(os.path.join(df_dir, f'{n}.TXT'), sep='\t')
