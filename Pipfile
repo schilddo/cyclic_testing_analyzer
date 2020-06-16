@@ -1,24 +1,18 @@
 [[source]]
-name = "pypi"
-url = "https://pypi.org/simple"
+url = "https://pypi.python.org/simple"
 verify_ssl = true
-
-[dev-packages]
+name = "pypi"
 
 [packages]
-numpy = "*"
-scipy = "*"
-matplotlib = "*"
-pandas = "*"
-sklearn = "*"
-pyqt5 = "*"
-kivy = "*"
-kivy-garden = "*"
-docutils = "*"
-pygments = "*"
-pypiwin32 = "*"
-"kivy-deps.sdl2" = "*"
-"kivy-deps.glew" = "*"
+kivy = "~=1.11.1"
+matplotlib = "~=3.2.1"
+pandas = "~=1.0.4"
+scikit-learn = "~=0.23.1"
+pyqt5 = "~=5.15.0"
+docutils = "~=0.16"
+pygments = "~=2.6.1"
+
+[dev-packages]
 
 [requires]
 python_version = "3.7"

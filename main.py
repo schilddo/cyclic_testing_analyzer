@@ -19,7 +19,7 @@ sys.path.extend([os.getcwd()])
 from src import fit, hysteresis, io_data, preprocessing, kivy_classes
 
 kivy.require('1.11.1')
-Window.size = (1920, 1080)
+Window.maximize()
 
 
 class CTAnalyzer(App):
