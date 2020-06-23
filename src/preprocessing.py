@@ -9,7 +9,7 @@ matplotlib.use('Qt5Agg')
 logger = logging.getLogger(__name__)
 
 
-def prepare(df, x_dimensions=1.3, y_dimensions=10, factor=50, smoothing=15,
+def prepare(df, x_dimensions=1.3, y_dimensions=10.0, factor=50, smoothing=15,
             distance=5, width=5, split_peaks=False, filter_value=0.005, figsize=(20, 10), log=False):
     logger.info(f'Called prepare')
 

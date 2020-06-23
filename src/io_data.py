@@ -51,7 +51,7 @@ def load_data(path_to_file, is_percent=True, log=False):
 
 
 def save_data(folder_out, content, figures, sample_name=None, log=False):
-    logger.info('Called save_results')
+    logger.info('Called save_data')
 
     if sample_name is None:
         sample_name = datetime.datetime.now()

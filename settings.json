@@ -5,14 +5,14 @@
   },
   {
     "type": "bool",
-    "title": "Pre-Loading",
+    "title": "Pre-loading",
     "desc": "Enable if the experiment included pre-loading cycles",
     "section": "Analysis Settings",
     "key": "split_peaks"
   },
   {
     "type": "numeric",
-    "title": "Filter Value",
+    "title": "Filter value",
     "desc": "The strain value used to distinguish between pre-loading and normal experiment cycles",
     "section": "Analysis Settings",
     "key": "filter_value"
