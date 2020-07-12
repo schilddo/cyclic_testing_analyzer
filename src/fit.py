@@ -149,11 +149,11 @@ def calc_borders(range_filter, down, chunk):
             if len(section) == section_size:
                 sections.append(section)
 
-        # linear fit each section of the first 50 percent and determine best r2 score
+        # linear fit each subsection fully contained in the first half of the section and determine best r2 score
         if down == 0:
-            sections_filtered = sections[:-(len(sections)//2)]
+            sections_filtered = sections[:(len(sections)//2)]
         else:
-            sections_filtered = sections[(len(sections)//2):]
+            sections_filtered = sections[(len(sections)//2)+1:]
 
         r2_best, best_section = (0, 0)
         for section in sections_filtered:
