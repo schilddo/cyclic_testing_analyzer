@@ -96,6 +96,7 @@ def linear(df_in, dfs_grouped, range_filter, figsize=(20, 10), log=False):
 
     params_down = pd.DataFrame({'Cycle': cycles_down, 'r2': r2_down, 'E': young_modulus_down,
                                 't': t_down, 'max_strain': max_strain_down})
+    d = {'loading': params_up, 'unloading': params_down}
 
     # plotting
     axs[1].scatter(max_strain_up, young_modulus_up, color='navy')
@@ -110,7 +111,7 @@ def linear(df_in, dfs_grouped, range_filter, figsize=(20, 10), log=False):
         logger.warning('Evaluation unsuccessful! Not even one single fit possible')
     else:
         logger.info(f'Successfully evaluated linear fit. Mean r²: {mean(r2_up+r2_down)}')
-    return {'loading': params_up, 'unloading': params_down}, fig
+    return d, fig
 
 
 def calc_borders(range_filter, down, chunk):

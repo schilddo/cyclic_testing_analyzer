@@ -87,10 +87,12 @@ def prepare(df, x_dimensions=1.3, y_dimensions=10.0, factor=50, smoothing=15,
             if len(group) > 1 and abs(len(group[0])-len(group[1])) > 10:
                 group.pop(-1)
 
+    d = {'df_stress': df_stress, 'df_min_max': df_min_max,
+         'hills': hills, 'valleys': valleys,
+         'dfs_chunks': dfs_chunks, 'dfs_grouped': dfs_grouped}
+
     logger.info(f'Preprocessing exited without errors, plotting graph')
-    return df, {'df_stress': df_stress, 'df_min_max': df_min_max,
-                'hills': hills, 'valleys': valleys,
-                'dfs_chunks': dfs_chunks, 'dfs_grouped': dfs_grouped}, fig
+    return df, d, fig
 
 
 def calculate_stress(df, x_dimensions, y_dimensions):
@@ -213,6 +215,7 @@ def get_master_curves(df, hills, valleys, figsize=(20, 10), log=False):
     # calculation
     df_time_strain = df[df.index.isin(valleys.values)]
     df_strain_stress = df[df.index.isin(hills.values)]
+    d = {'time_strain': df_time_strain, 'strain_stress': df_strain_stress}
 
     # plotting
     axs[0].plot([i for i in range(1, len(df_time_strain)+1)],
@@ -238,4 +241,4 @@ def get_master_curves(df, hills, valleys, figsize=(20, 10), log=False):
         logger.info('Second graph plotted successfully')
 
     logger.info(f'Calculated master curves')
-    return {'time_strain': df_time_strain, 'strain_stress': df_strain_stress}, fig
+    return d, fig
