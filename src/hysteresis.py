@@ -19,8 +19,9 @@ def calc(dfs_grouped, smoothing=16, figsize=(20, 10), log=False):
     ax.set_title('Hysteresis results')
     nr = 0
     hyst_integrals = {}
+    E_loading = {}
 
-    # calculate hysteresis integral
+    # calculate hysteresis integral and loading E module
     for group in dfs_grouped:
 
         nr += 1
@@ -42,7 +43,14 @@ def calc(dfs_grouped, smoothing=16, figsize=(20, 10), log=False):
         ax.plot(df_cycle['Standard travel'], df_cycle['Standard stress'])
         ax.annotate(nr, xy=(group[0].iloc[-1, 2], group[0].iloc[-1, -1]))
 
-        hyst_integrals[str(nr)] = integral
+        dy_loading = group[0]['Standard stress'].iloc[-1] - group[0]['Standard stress'].iloc[0]
+        dx_loading = group[0]['Standard travel'].iloc[-1] - group[0]['Standard travel'].iloc[0]
+
+        # the young modulus is divided by ten not thousand to give GPa because the x-axis is given in %
+        hyst_integrals[str(nr)] = [integral]
+        E_loading[str(nr)] = (dy_loading / dx_loading) / 10
+
+    results = {'areas': hyst_integrals, 'E_loading': E_loading}
 
     logger.info(f'Successfully calculated hysteresis: {len(hyst_integrals)} areas')
-    return hyst_integrals, fig
+    return results, fig

@@ -120,10 +120,7 @@ def calc_borders(range_filter, down, chunk):
 
     # FILTER: static strain values
     if range_type == 'Static strain':
-        if down == 0:
-            df_range['Travel subtracted'] = df_range['Standard travel'] - df_range.iloc[0, 2]
-        elif down == 1:
-            df_range['Travel subtracted'] = df_range['Standard travel'] - df_range.iloc[-1, 2]
+        df_range['Travel subtracted'] = abs(df_range['Standard travel'] - df_range.iloc[0, 2])
         df_start_end = df_range[(df_range['Travel subtracted'] > range_filter['lower_strain']) &
                                 (df_range['Travel subtracted'] < range_filter['upper_strain'])]
 
