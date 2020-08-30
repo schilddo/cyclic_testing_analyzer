@@ -187,18 +187,19 @@ def groupify(df_end, df_min_max, hills, valleys):
         prev = row[0]
     dfs_chunks.append(df_end.iloc[prev:])
 
-    if hills.values.flat[0] < valleys.values.flat[0]:
-        dfs_grouped = []
-        for i in range(1, len(dfs_chunks), 2):
-            dfs_grouped.append([dfs_chunks[i - 1], dfs_chunks[i]])
-        if len(dfs_chunks) % 2 != 0:
-            dfs_grouped.append([dfs_chunks[-1]])
-    else:
-        dfs_grouped = [[dfs_chunks[0]]]
-        for i in range(2, len(dfs_chunks), 2):
-            dfs_grouped.append([dfs_chunks[i - 1], dfs_chunks[i]])
-        if len(dfs_chunks) % 2 == 0:
-            dfs_grouped.append([dfs_chunks[-1]])
+    dfs_grouped = []
+    if len(hills) != 0 and len(valleys) != 0:
+        if hills.values.flat[0] < valleys.values.flat[0]:
+            for i in range(1, len(dfs_chunks), 2):
+                dfs_grouped.append([dfs_chunks[i - 1], dfs_chunks[i]])
+            if len(dfs_chunks) % 2 != 0:
+                dfs_grouped.append([dfs_chunks[-1]])
+        else:
+            dfs_grouped = [[dfs_chunks[0]]]
+            for i in range(2, len(dfs_chunks), 2):
+                dfs_grouped.append([dfs_chunks[i - 1], dfs_chunks[i]])
+            if len(dfs_chunks) % 2 == 0:
+                dfs_grouped.append([dfs_chunks[-1]])
 
     logger.info(f'Sections grouped')
     return dfs_chunks, dfs_grouped
