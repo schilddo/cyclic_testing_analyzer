@@ -112,9 +112,10 @@ def cut_end(df, factor):
     # df_end = df.iloc[int(len(df) - len(df) / 3):] this would only evaluate the last third
     trigger = df_end['Standard travel'].diff(periods=-1).abs().median() * factor
 
-    cut_off_index = df_end[df_end['Standard travel'].diff(periods=-1).abs() > trigger].index[0]
-
-    df = df.iloc[0:cut_off_index]
+    cut_off_df = df_end[df_end['Standard travel'].diff(periods=-1).abs() > trigger]
+    if not cut_off_df.empty:
+        cut_off_index = cut_off_df.index[0]
+        df = df.iloc[0:cut_off_index]
 
     logger.info(f'Calculated end of experiment, median derivative factor: {factor}')
     return df
