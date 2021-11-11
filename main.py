@@ -56,7 +56,7 @@ class CTAnalyzer(App):
                                  'output_path': os.path.join(os.getcwd(), 'results'),
                                  'x_dimensions': 1.3,
                                  'y_dimensions': 10.0,
-                                 'factor': 25,
+                                 'factor': 100,
                                  'smoothing_pre': 15,
                                  'peak_distance': 5,
                                  'peak_width': 5,

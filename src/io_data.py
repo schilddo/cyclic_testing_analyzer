@@ -78,7 +78,7 @@ def save_data(folder_out, content, figures, sample_name=None, log=False):
 
     # save figures
     for key, fig in figures.items():
-        fig.savefig(os.path.join(figure_dir, f'{key}.png'))
+        fig.savefig(os.path.join(figure_dir, f'{key}.svg'))
         if log:
             logger.info(f'Saved {key}.png')
 
